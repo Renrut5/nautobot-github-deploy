@@ -5,9 +5,10 @@ on:
     types: [published]
 
 env:
-  CODE_REPOSITORY: "networktocode-llc/nautobot-github-deploy"
+  CODE_REPOSITORY: "Renrut5/nautobot-github-deploy"
   REGISTRY: "ghcr.io"
   IMAGE_NAME: "${{ github.repository }}"
+  PYTHON_VER: 3.12.3
 
 jobs:
   validate-poetry:
@@ -66,7 +67,3 @@ jobs:
             PYTHON_VER=${{ env.PYTHON_VER }}
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
-
-
-
-
