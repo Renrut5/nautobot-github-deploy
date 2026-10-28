@@ -10,17 +10,18 @@ env:
   REGISTRY: "ghcr.io"
   IMAGE_NAME: "${{ github.repository }}"
   PYTHON_VER: 3.12.3
+  NAUTOBOT_VERSION: 3.2
 
 jobs:
-  validate-poetry:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Check out repository code"
-        uses: "actions/checkout@v4"
-      - name: "Set Nautobot Version"
-        run: | 
-          NAUTOBOT_VERSION=$(python3 scripts/get_nautobot_version.py)
-          echo "NAUTOBOT_VERSION=$NAUTOBOT_VERSION" >> "$GITHUB_ENV"
+  # validate-poetry:
+  #   runs-on: "ubuntu-latest"
+  #   steps:
+  #     - name: "Check out repository code"
+  #       uses: "actions/checkout@v4"
+  #     - name: "Set Nautobot Version"
+  #       run: | 
+  #         NAUTOBOT_VERSION=$(python3 scripts/get_nautobot_version.py)
+  #         echo "NAUTOBOT_VERSION=$NAUTOBOT_VERSION" >> "$GITHUB_ENV"
 
 
 
@@ -64,7 +65,7 @@ jobs:
           tags: "${{ steps.meta.outputs.tags }}"
           labels: "${{ steps.meta.outputs.labels }}"
           build-args: |
-            NAUTOBOT_VERSION=${{ needs.validate-poetry.outputs.nautobot_version }}
+            NAUTOBOT_VERSION=${{ env.NAUTOBOT_VERSION }}
             PYTHON_VER=${{ env.PYTHON_VER }}
           cache-from: "type=gha"
           cache-to: "type=gha,mode=max"
