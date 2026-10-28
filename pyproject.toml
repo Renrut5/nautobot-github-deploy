@@ -1,0 +1,27 @@
+[project]
+name = "nautobot-github-deploy"
+version = "0.0.1"
+description = "GitHub repo for building Nautobot images and deploying to Kubernetes using Helm charts."
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+requires-python = ">=3.10,<3.14"
+dynamic = ["dependencies"]
+
+[tool.poetry.dependencies]
+python = "3.12.3"
+nautobot = "3.2.7"
+# Add Custom Dependencies Here
+
+
+
+[dependency-groups]
+dev = [
+    "invoke (>=3.0.3,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+# echo $(python3 -c 'import tomllib; f = open("pyproject.toml", "rb"); data = tomllib.load(f); print(data["tool"]["poetry"]["dependencies"]["nautobot"])')
