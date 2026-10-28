@@ -9,8 +9,8 @@ env:
   CODE_REPOSITORY: "Renrut5/nautobot-github-deploy"
   REGISTRY: "ghcr.io"
   IMAGE_NAME: "${{ github.repository }}"
-  PYTHON_VER: 3.12.3
-  NAUTOBOT_VERSION: 3.2
+  PYTHON_VER: 3.13
+  NAUTOBOT_VERSION: 3.2.8
 
 jobs:
   # validate-poetry:
