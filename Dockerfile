@@ -9,7 +9,7 @@ USER root
 # Uninstall Nautobot
 
 # Copy Poetry file and install dependencies
-COPY pyproject.toml
+COPY pyproject.toml pyproject.toml
 RUN INSTALLED_NAUTOBOT_VER=$(pip show nautobot | grep "^Version" | sed "s/Version: //"); \
     poetry add --lock nautobot@${INSTALLED_NAUTOBOT_VER} --python ${PYTHON_VER}
 
