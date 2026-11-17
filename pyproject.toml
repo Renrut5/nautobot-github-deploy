@@ -16,11 +16,14 @@ nautobot = "3.2.7"
 # Add Custom Dependencies Here #
 ################################
 
+# Local apps in the plugins/ directory
+# example-app = { path = "plugins/example_app-0.0.1a0-py3-none-any.whl" }
+
 
 
 [dependency-groups]
 dev = [
-    "invoke (>=3.0.3,<4.0.0)"
+    "invoke (>=3.0.3,<4.0.0)",
 ]
 
 

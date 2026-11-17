@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir \
 
 WORKDIR /source
 COPY pyproject.toml ./
+COPY plugins/ ./plugins/
 RUN poetry lock && \
     poetry export --format requirements.txt --output requirements.txt
 
@@ -23,7 +24,9 @@ FROM ${IMAGE_REPOSITORY}:${IMAGE_TAG}-py${PYTHON_VER}
 
 USER root
 COPY --from=lock /source/requirements.txt /tmp/requirements.txt
+# Same path as the lock stage, since requirements.txt references plugin files by absolute path
+COPY plugins/ /source/plugins/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
-    rm /tmp/requirements.txt
+    rm -rf /tmp/requirements.txt /source
 
 USER nautobot
