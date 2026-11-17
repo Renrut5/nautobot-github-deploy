@@ -9,7 +9,7 @@ requires-python = ">=3.10,<3.14"
 dynamic = ["dependencies"]
 
 [tool.poetry.dependencies]
-python = "3.12.3"
+python = "~3.12"
 nautobot = "3.2.7"
 
 ################################

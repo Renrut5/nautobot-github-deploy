@@ -15,6 +15,9 @@ if __name__ == "__main__":
     except KeyError:
         sys.exit("`python not found in Poetry dependencies.")
 
+    if isinstance(python_version, str):
+        python_version = python_version.removeprefix("~")
+
     if not isinstance(python_version, str) or not is_valid_version(python_version):
         sys.exit(f"`nautobot` must be an exact version, got: {python_version!r}")
 
