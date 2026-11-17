@@ -8,6 +8,9 @@ authors = [
 requires-python = ">=3.10,<3.14"
 dynamic = ["dependencies"]
 
+[tool.poetry]
+package-mode = false
+
 [tool.poetry.dependencies]
 python = "~3.12"
 nautobot = "3.2.7"
@@ -15,16 +18,20 @@ nautobot = "3.2.7"
 ################################
 # Add Custom Dependencies Here #
 ################################
+# nautobot-app-ssot = "*"
 
+
+########################################
+# Local apps in the plugins/ directory #
+########################################
+example-app = { path = "plugins/example_app-1.0.0-py3-none-any.whl" }
 
 
 [dependency-groups]
 dev = [
-    "invoke (>=3.0.3,<4.0.0)"
+    "invoke (>=3.0.3,<4.0.0)",
 ]
-
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-# echo $(python3 -c 'import tomllib; f = open("pyproject.toml", "rb"); data = tomllib.load(f); print(data["tool"]["poetry"]["dependencies"]["nautobot"])')
