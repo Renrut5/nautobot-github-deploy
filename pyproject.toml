@@ -24,7 +24,6 @@ nautobot = "3.2.7"
 ########################################
 # Local apps in the plugins/ directory #
 ########################################
-# example-app = { path = "plugins/example_app-0.0.1a0-py3-none-any.whl" }
 example-app = { path = "plugins/example_app-1.0.0-py3-none-any.whl" }
 
 
