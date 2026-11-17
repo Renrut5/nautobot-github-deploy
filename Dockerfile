@@ -1,4 +1,29 @@
 ARG IMAGE_REPOSITORY=ghcr.io/nautobot/nautobot
-ARG IMAGE_TAG=3.2-py3.13
+ARG IMAGE_TAG=3.2.7
+ARG PYTHON_VER=3.12
 
-FROM ${IMAGE_REPOSITORY}:${IMAGE_TAG}
+# Resolve dependencies from pyproject.toml into a fresh lock file
+FROM ${IMAGE_REPOSITORY}:${IMAGE_TAG}-py${PYTHON_VER} AS lock
+
+ARG POETRY_VERSION=2.5.1
+ARG POETRY_PLUGIN_EXPORT_VERSION=1.10.1
+
+USER root
+RUN pip install --no-cache-dir \
+    "poetry==${POETRY_VERSION}" \
+    "poetry-plugin-export==${POETRY_PLUGIN_EXPORT_VERSION}"
+
+WORKDIR /source
+COPY pyproject.toml ./
+RUN poetry lock && \
+    poetry export --format requirements.txt --output requirements.txt
+
+# Final image: install the locked dependencies, without Poetry
+FROM ${IMAGE_REPOSITORY}:${IMAGE_TAG}-py${PYTHON_VER}
+
+USER root
+COPY --from=lock /source/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
+
+USER nautobot
