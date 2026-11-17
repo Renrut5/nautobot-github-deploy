@@ -1,6 +1,8 @@
 # Custom Nautobot Apps
 
-Put Nautobot apps that aren't installed from PyPI in this folder. During the image build, every file here is copied in and installed alongside Nautobot.
+Put Nautobot apps that aren't installed from PyPI in this folder. During the image build, this folder is copied in, and each wheel listed in `pyproject.toml` is installed alongside Nautobot.
+
+`example_app-1.0.0-py3-none-any.whl` is a working example: it's listed in `pyproject.toml` and enabled in `config/nautobot_config.py`. Follow the same pattern for your own apps.
 
 ## Requirements
 
@@ -21,7 +23,7 @@ Put Nautobot apps that aren't installed from PyPI in this folder. During the ima
 
 2. Copy the `.whl` file into this folder.
 
-3. Add it to `pyproject.toml`, under `[tool.poetry.dependencies]` in the "Add Custom Dependencies Here" section:
+3. Add it to `pyproject.toml`, under `[tool.poetry.dependencies]` in the "Local apps in the plugins/ directory" section:
 
    ```toml
    my-app = { path = "plugins/my_app-1.0.0-py3-none-any.whl" }
@@ -30,11 +32,11 @@ Put Nautobot apps that aren't installed from PyPI in this folder. During the ima
    - The name on the left is the app's package name, as published in its metadata (e.g. `nautobot-ssot`), not the file name.
    - The path must match the file name exactly, including the version.
 
-4. Enable the app in Nautobot by adding it to `PLUGINS` in `nautobot_config.py`. Installing an app doesn't enable it.
+4. Enable the app in Nautobot by adding its Python module name (e.g. `example_app`) to `PLUGINS` in `config/nautobot_config.py`. Installing an app doesn't enable it.
 
 ## Updating or removing an app
 
 - **Updating:** replace the `.whl` file, and update the file name in the `path` in `pyproject.toml` to match.
-- **Removing:** delete the `.whl` file, its line in `pyproject.toml`, and its entry in `PLUGINS`.
+- **Removing:** delete the `.whl` file, its line in `pyproject.toml`, and its entry in `PLUGINS` in `config/nautobot_config.py`.
 
 If `pyproject.toml` points at a file that isn't in this folder, the image build fails with `Path ... does not exist`.
