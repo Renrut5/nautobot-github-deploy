@@ -29,4 +29,6 @@ COPY plugins/ /source/plugins/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
     rm -rf /tmp/requirements.txt /source
 
+COPY --chown=nautobot:nautobot config/nautobot_config.py /opt/nautobot/nautobot_config.py
+
 USER nautobot

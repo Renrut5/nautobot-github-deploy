@@ -1249,6 +1249,21 @@ files = [
 dev = ["coverage", "pytest (>=7.4.4)"]
 
 [[package]]
+name = "example_app"
+version = "1.0.0"
+description = "Nautobot example app that does a whole lot of nothing."
+optional = false
+python-versions = ">=3.10,<3.15"
+groups = ["main"]
+files = [
+    {file = "example_app-1.0.0-py3-none-any.whl", hash = "sha256:e9f7f09bf04cb174821d0e429cf7e12bcafeb7183362abd58812d1dfa29de8b2"},
+]
+
+[package.source]
+type = "file"
+url = "plugins/example_app-1.0.0-py3-none-any.whl"
+
+[[package]]
 name = "frozenlist"
 version = "1.8.0"
 description = "A list-like structure which implements collections.abc.MutableSequence"
@@ -4190,5 +4205,5 @@ propcache = ">=0.2.1"
 
 [metadata]
 lock-version = "2.1"
-python-versions = "3.12.3"
-content-hash = "20f634c0c13bd58fce7202272903ff6b9f7596f222c05df9a745287df96edfe9"
+python-versions = "~3.12"
+content-hash = "11450b6cf47d9b51ddfa81d303797f892add59355cf8c6bd41d9ecfe59805104"
