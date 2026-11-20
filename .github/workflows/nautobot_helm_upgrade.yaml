@@ -1,0 +1,94 @@
+---
+name: Nautobot Helm - Upgrade
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Select the environment to deploy to.'
+        required: true
+        type: environment
+
+jobs:
+  deploy:
+    runs-on: 
+      - ubuntu-latest
+      - self-hosted
+    environment: ${{ github.event.inputs.target_env }}
+    env:
+      DEPLOYMENT_NAME: ${{ vars.DEPLOYMENT_NAME || 'nautobot' }}
+      KUBERNETES_NAMESPACE: ${{ vars.KUBERNETES_NAMESPACE || 'default' }}
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig
+      ENV_VALUES: ${{ github.workspace }}/env.values.yaml
+      HELM_CHART_VERSION: ${{ vars.NB_HELM_CHART_VERSION }}
+
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: 'v3.14.0'
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.35.0'
+
+      - name: Create kubeconfig file
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > "$KUBECONFIG"
+          chmod 600 "$KUBECONFIG"
+          echo "KUBECONFIG=$KUBECONFIG" >> "$GITHUB_ENV"
+
+      - name: Verify cluster access
+        run: |
+          kubectl cluster-info
+          kubectl get ns "$KUBERNETES_NAMESPACE" >/dev/null 2>&1 || true
+
+      - name: Add Nautobot Helm repository
+        run: |
+          helm repo add nautobot https://nautobot.github.io/helm-charts/
+          helm repo update nautobot
+
+      
+      - name: Create secondary values file
+        run: |
+          touch $ENV_VALUES
+          cat <<EOF > $ENV_VALUES
+          ---
+          nautobot:
+            secretKey: ${{ secrets.NAUTOBOT_SECRET_KEY }}
+            allowed_hosts: ${{ vars.NB_ALLOWED_HOSTS }}
+            replicaCount: ${{ vars.NB_REPLICA_COUNT || '1' }}
+            image:
+              registry: "ghcr.io"
+              repository: "${{ env.IMAGE_NAME }}"
+              tag: "${{ vars.NAUTOBOT_IMAGE_TAG }}"
+            replicaCount: ${{ vars.NAUTOBOT_WEB_REPLICA_COUNT || '2' }}
+
+          workers:
+            default:
+              replicaCount: ${{ vars.NAUTOBOT_WORKERS_COUNT || '2' }}
+              concurrency: ${{ vars.NAUTOBOT_WORKERS_CONCURRENCY || '0' }}
+              taskQueues: "${{ vars.NAUTOBOT_WORKERS_TASK_QUEUE || 'default' }}"
+
+          EOF
+
+      - name: Deploy Helm Chart
+        # TODO: Use own image
+        # TODO: PULL kubeconfig from GitHub Secrets
+        run: |
+          helm upgrade --install $DEPLOYMENT_NAME nautobot/nautobot \
+            ${HELM_CHART_VERSION:+--version "$HELM_CHART_VERSION"} \
+            --namespace "$KUBERNETES_NAMESPACE" --create-namespace \
+            --values "./config/nautobot.values.yml" \
+            --values "$ENV_VALUES" \
+            --wait \
+            --wait-for-jobs \
+            --timeout ${{ vars.NB_HELM_TIMEOUT || '15m' }}

@@ -16,7 +16,6 @@ env:
 
   # Output Image Info
   PUBLISHED_IMAGE_REGISTRY: "ghcr.io"
-  PUBLISHED_IMAGE_NAME: "${{ vars.PUBLISHED_IMAGE_NAME || github.repository }}"
 
 jobs:
   build_and_publish_image:
@@ -28,6 +27,9 @@ jobs:
     steps:
       - name: Check out code
         uses: "actions/checkout@v4"
+
+      - name: Set lowercase image name
+        run: echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
       - name: "Set Nautobot version from pyproject.toml"
         run: |
@@ -48,7 +50,7 @@ jobs:
         id: "meta"
         uses: "docker/metadata-action@v5"
         with:
-          images: "${{ env.PUBLISHED_IMAGE_REGISTRY }}/${{ env.PUBLISHED_IMAGE_NAME }}"
+          images: "${{ env.PUBLISHED_IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}"
           flavor: |
             latest=false
           tags: |
